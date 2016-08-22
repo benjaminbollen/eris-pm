@@ -10,6 +10,7 @@ jobs:
   job:
     deploy:
       contract: consuming-contract.sol
+      instance: C
       libraries: Search:$deploySingleLib
       wait: true
 
@@ -40,6 +41,22 @@ jobs:
         - 3
       wait: true
 
+- name: queryFirstCell
+  job:
+    query-contract:
+      destination: $deployConsumingContract
+      function: getDataAtIndex
+      data:
+        - 0
+      wait: true
+
+- name: assertProperIndex
+  job:
+    assert:
+      key: $queryFirstCell
+      relation: eq
+      val: 1
+
 - name: testSingleLib
   job:
     call:
@@ -64,7 +81,7 @@ jobs:
     assert:
       key: $queryTestSingleLib
       relation: eq
-      value: 5
+      val: 5
 
 
 - name: deployBasicMath
