@@ -8,6 +8,10 @@ contract C {
         data.push(value);
     }
 
+    function getDataAtIndex(uint index) constant returns (uint) {
+        return data[index];
+    }
+
     function replace(uint _old, uint _new) {
         // This performs the library function call
         uint index = data.indexOf(_old);

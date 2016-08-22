@@ -13,6 +13,60 @@ jobs:
       libraries: Search:$deploySingleLib
       wait: true
 
+- name: appendValue1
+  job:
+    call:
+      destination: $deployConsumingContract
+      function: append
+      data:
+        - 1
+      wait: true
+
+- name: appendValue2
+  job:
+    call:
+      destination: $deployConsumingContract
+      function: append
+      data:
+        - 2
+      wait: true
+
+- name: appendValue3
+  job:
+    call:
+      destination: $deployConsumingContract
+      function: append
+      data:
+        - 3
+      wait: true
+
+- name: testSingleLib
+  job:
+    call:
+      destination: $deployConsumingContract
+      function: replace
+      data: 
+        - 1
+        - 5
+      wait: true
+
+- name: queryTestSingleLib
+  job:
+    query-contract:
+      destination: $deployConsumingContract
+      function: getDataAtIndex
+      data: 
+        - 0
+      wait: true
+
+- name: assertIndexChanged
+  job:
+    assert:
+      key: $queryTestSingleLib
+      relation: eq
+      value: 5
+
+
 - name: deployBasicMath
   job:
     deploy:
@@ -33,3 +87,4 @@ jobs:
       contract: multi-lib-consumer.sol
       libraries: basicMath:$deployBasicMath,intStructs:$deployIntStructs
       wait: true
+
