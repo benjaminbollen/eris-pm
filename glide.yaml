@@ -1,6 +1,13 @@
 package: github.com/eris-ltd/eris-pm
 import:
-- package: github.com/eris-ltd/eris-compilers
 - package: github.com/eris-ltd/common
   subpackages:
   - go/common
+- package: github.com/eris-ltd/eris-abi
+  subpackages:
+  - core
+- package: github.com/eris-ltd/eris-compilers
+  subpackages:
+  - network
+  - util
+- package: github.com/eris-ltd/eris-logger

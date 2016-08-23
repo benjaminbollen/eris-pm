@@ -63,7 +63,7 @@ jobs:
       destination: $deployConsumingContract
       function: replace
       data: 
-        - 1
+        - 3
         - 5
       wait: true
 
@@ -73,7 +73,7 @@ jobs:
       destination: $deployConsumingContract
       function: getDataAtIndex
       data: 
-        - 0
+        - 2
       wait: true
 
 - name: assertIndexChanged

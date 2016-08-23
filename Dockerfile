@@ -13,7 +13,7 @@ COPY . $REPO
 WORKDIR $REPO
 RUN go get github.com/Masterminds/glide && \
 	go get github.com/sgotti/glide-vc && \
-	glide install --strip-vcs --strip-vendor && \
+	glide install --strip-vendor && \
 	glide vc
 
 # install eris-pm
