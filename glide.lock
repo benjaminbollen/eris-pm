@@ -1,12 +1,12 @@
 hash: 177af901b05ada6d6f92d640267d672a7823e6fe298854287b984b9bd636c243
-updated: 2016-08-23T16:36:00.899860788-05:00
+updated: 2016-08-24T10:26:09.888896274-05:00
 imports:
 - name: github.com/Azure/go-ansiterm
   version: fa152c58bc15761d0200cb75fe958b89a9d4888e
   subpackages:
   - winterm
 - name: github.com/bugsnag/bugsnag-go
-  version: 02e952891c52fbcb15f113d90633897355783b6e
+  version: 2b6337ec4aee214cc3ce46ee20d20a574ebbb1c7
   subpackages:
   - errors
 - name: github.com/bugsnag/osext
@@ -14,37 +14,37 @@ imports:
 - name: github.com/bugsnag/panicwrap
   version: d6191e27ad06236eaad65d79e49a08b03b9f8029
 - name: github.com/docker/docker
-  version: 91fd0df9c0775dc48446c924c4789c81b4f5f47e
+  version: a110512e38a14e938096fe18b345e8f920605b9f
   subpackages:
   - pkg/term
   - pkg/system
   - pkg/term/windows
 - name: github.com/docker/go-units
-  version: f2d77a61e3c169b43402a0a1e84f06daf29b8190
+  version: eb879ae3e2b84e2a142af415b679ddeda47ec71c
 - name: github.com/eris-ltd/common
-  version: eb041cd9a6dea7667b98db16fb5613eedaa62326
+  version: 92c437c9919c9d7baf60ef3d376461189c1c6c25
   subpackages:
   - go/common
 - name: github.com/eris-ltd/eris-abi
-  version: c577c802847d7755afeda902be06d44be5f6adcf
+  version: 6993e969fd1bc63d87a92d2be2300ab027f77ff8
   subpackages:
   - core
   - abi
 - name: github.com/eris-ltd/eris-compilers
-  version: 0ac7d524935fc9fda60d552d64410c0ca416aa36
+  version: 5d5fa75788e855e0323e5e7597d2cc17703d6f4b
   subpackages:
   - network
   - util
 - name: github.com/eris-ltd/eris-logger
-  version: ea48a395d6ecc0eccc67a26da9fc7a6106fabb84
+  version: aa1d50814ef98f3e3b048e7ef67ffcb2076582b0
 - name: github.com/ethereum/go-ethereum
-  version: 5f55d95aea433ef97c48ae927835d833772350de
+  version: fed692f67e81bd3937a5efab38f56a9b99d04d41
   subpackages:
   - crypto/sha3
 - name: github.com/Sirupsen/logrus
-  version: f3cfb454f4c209e6668c95216c4744b8fddb2356
+  version: 08a8a7c27e3d058a8989316a850daad1c10bf4ab
 - name: golang.org/x/sys
-  version: 62bee037599929a6e9146f29d10dd5208c43507d
+  version: a646d33e2ee3172a661fc09bca23bb4889a41bc8
   subpackages:
   - unix
 devImports: []
