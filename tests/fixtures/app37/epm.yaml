@@ -1,0 +1,28 @@
+jobs:
+
+- name: TestLib
+  job:
+    deploy:
+      contract: TestLibrary.sol
+      wait: true
+
+- name: PersonTest
+  job:
+    deploy:
+      contract: PersonTest.sol
+      libraries: TestLibrary:$TestLib
+      wait: true
+
+- name: testNameChange
+  job:
+    call:
+      destination: $PersonTest
+      function: testNameChange
+      wait: true
+
+- name: assertNameChange
+  job:
+    assert:
+      key: $testNameChange
+      relation: eq
+      val: success
