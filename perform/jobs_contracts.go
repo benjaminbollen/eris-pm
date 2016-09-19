@@ -16,8 +16,6 @@ import (
 	compilers "github.com/eris-ltd/eris-compilers/network"
 	response "github.com/eris-ltd/eris-compilers/util"
 	log "github.com/eris-ltd/eris-logger"
-	// "github.com/eris-ltd/eris-pm/Godeps/_workspace/src/github.com/eris-ltd/mint-client/mintx/core"
-	// "github.com/eris-ltd/eris-pm/Godeps/_workspace/src/github.com/eris-ltd/tendermint/types"
 
 	"github.com/eris-ltd/eris-db/client"
 	"github.com/eris-ltd/eris-db/client/core"
@@ -276,7 +274,7 @@ func deployRaw(do *definitions.Do, deploy *definitions.Deploy, contractName, con
 	}).Info()
 
 	erisNodeClient := client.NewErisNodeClient(do.Node)
-	erisKeyClient := keys.NewErisKeyClient(do.Singer)
+	erisKeyClient := keys.NewErisKeyClient(do.Signer)
 	tx, err := core.Call(erisNodeClient, erisKeyClient, do.PublicKey, deploy.Source, "", deploy.Amount, deploy.Nonce, deploy.Gas, deploy.Fee, contractCode)
 	if err != nil {
 		return &types.CallTx{}, fmt.Errorf("Error deploying contract %s: %v", contractName, err)
