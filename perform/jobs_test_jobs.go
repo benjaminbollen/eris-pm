@@ -10,7 +10,8 @@ import (
 	"github.com/eris-ltd/eris-pm/util"
 
 	log "github.com/eris-ltd/eris-logger"
-	cclient "github.com/eris-ltd/eris-pm/Godeps/_workspace/src/github.com/eris-ltd/tendermint/rpc/core_client"
+
+	"github.com/eris-ltd/eris-db/client"
 )
 
 func QueryContractJob(query *definitions.QueryContract, do *definitions.Do) (string, []*definitions.Variable, error) {
@@ -52,8 +53,8 @@ func QueryContractJob(query *definitions.QueryContract, do *definitions.Do) (str
 	}
 
 	// Call the client
-	client := cclient.NewClient(do.Chain, "HTTP")
-	retrn, err := client.Call(fromAddrBytes, toAddrBytes, dataBytes)
+	nodeClient := client.NewErisNodeClient(do.Chain)
+	retrn, _, err := nodeClient.QueryContract(fromAddrBytes, toAddrBytes, dataBytes)
 	if err != nil {
 		return "", make([]*definitions.Variable, 0), err
 	}

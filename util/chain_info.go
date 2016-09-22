@@ -10,43 +10,34 @@ import (
 	"github.com/eris-ltd/eris-pm/definitions"
 
 	log "github.com/eris-ltd/eris-logger"
-	cclient "github.com/eris-ltd/eris-pm/Godeps/_workspace/src/github.com/eris-ltd/tendermint/rpc/core_client"
+
+	"github.com/eris-ltd/eris-db/client"
 )
 
-func ChainStatus(field string, do *definitions.Do) (string, error) {
-	client := cclient.NewClient(do.Chain, "HTTP")
-
-	r, err := client.Status()
+func ChainStatus(do *definitions.Do) (chainId string, latestBlockHeight int, err error) {
+	nodeClient := client.NewErisNodeClient(do.Chain)
+	// NOTE: ChainId should be bytes, convert it here to string
+	// NodeInfo is no longer exposed through Status();
+	// other values are currentlu not used by e-pm
+	chainIdBytes, _, _, latestBlockHeight, _, err := nodeClient.Status()
 	if err != nil {
-		return "", err
+		return "", 0, err
 	}
-
-	s, err := FormatOutput([]string{field}, 0, r)
-	if err != nil {
-		return "", err
-	}
-
-	return s, nil
+	// set return values
+	chainId = string(chainIdBytes)
+	return
 }
+
+
 
 func GetChainID(do *definitions.Do) error {
 	if do.ChainID == "" {
-		status, err := ChainStatus("node_info", do)
+		chainId, _, err := ChainStatus(do)
 		if err != nil {
 			return err
 		}
 
-		// Wrangle these returns
-		type NodeInfo struct {
-			ChainID string `mapstructure:"chain_id" json:"chain_id"`
-		}
-		var ret NodeInfo
-		err = json.Unmarshal([]byte(status), &ret)
-		if err != nil {
-			return err
-		}
-
-		do.ChainID = ret.ChainID
+		do.ChainID = chainId
 		log.WithField("=>", do.ChainID).Info("Using ChainID from Node")
 	}
 
@@ -54,23 +45,17 @@ func GetChainID(do *definitions.Do) error {
 }
 
 func AccountsInfo(account, field string, do *definitions.Do) (string, error) {
-	client := cclient.NewClient(do.Chain, "HTTP")
 
 	addrBytes, err := hex.DecodeString(account)
 	if err != nil {
 		return "", fmt.Errorf("Account Addr %s is improper hex: %v", account, err)
 	}
-
-	r, err := client.GetAccount(addrBytes)
+	nodeClient := client.NewErisNodeClient(do.Chain)
+	r, err := nodeClient.GetAccount(addrBytes)
 	if err != nil {
 		return "", err
 	}
 	if r == nil {
-		return "", fmt.Errorf("Account %s does not exist", account)
-	}
-
-	r2 := r.Account
-	if r2 == nil {
 		return "", fmt.Errorf("Account %s does not exist", account)
 	}
 
@@ -89,7 +74,7 @@ func AccountsInfo(account, field string, do *definitions.Do) (string, error) {
 
 		fields := strings.Split(field, ".")
 
-		s, err = FormatOutput([]string{"permissions"}, 0, r2)
+		s, err = FormatOutput([]string{"permissions"}, 0, r)
 
 		var deconstructed AccountPermission
 		err := json.Unmarshal([]byte(s), &deconstructed)
@@ -108,7 +93,7 @@ func AccountsInfo(account, field string, do *definitions.Do) (string, error) {
 			}
 		}
 	} else {
-		s, err = FormatOutput([]string{field}, 0, r2)
+		s, err = FormatOutput([]string{field}, 0, r)
 	}
 
 	if err != nil {
@@ -118,58 +103,48 @@ func AccountsInfo(account, field string, do *definitions.Do) (string, error) {
 	return s, nil
 }
 
-func NamesInfo(account, field string, do *definitions.Do) (string, error) {
-	client := cclient.NewClient(do.Chain, "HTTP")
-
-	r, err := client.GetName(account)
-	if err != nil {
-		return "", err
-	}
-	if r == nil {
-		return "", fmt.Errorf("Account %s does not exist", account)
-	}
-
-	r2 := r.Entry
-	s, err := FormatOutput([]string{field}, 0, r2)
+func NamesInfo(name, field string, do *definitions.Do) (string, error) {
+	nodeClient := client.NewErisNodeClient(do.Chain)
+	owner, data, expirationBlock, err := nodeClient.GetName(name)
 	if err != nil {
 		return "", err
 	}
 
-	s, err = strconv.Unquote(s)
-	if err != nil {
-		return "", err
+	switch strings.ToLower(field) {
+	case "name":
+		return name, nil
+	case "owner":
+		return string(owner), nil
+	case "data":
+		return data, nil
+	case "expires":
+		return strconv.Itoa(expirationBlock), nil
+	default:
+		return "", fmt.Errorf("Field %s not recognized", field)
 	}
-
-	return s, nil
 }
 
 func ValidatorsInfo(field string, do *definitions.Do) (string, error) {
-	client := cclient.NewClient(do.Chain, "HTTP")
-
-	r, err := client.ListValidators()
-	if err != nil {
-		return "", err
-	}
-
-	s, err := FormatOutput([]string{field}, 0, r)
-	if err != nil {
-		return "", err
-	}
-
-	type Account struct {
-		Address string `mapstructure:"address" json:"address"`
-	}
-
-	var deconstructed []Account
-	err = json.Unmarshal([]byte(s), &deconstructed)
+	nodeClient := client.NewErisNodeClient(do.Chain)
+	_, bondedValidators, unbondingValidators, err := nodeClient.ListValidators()
 	if err != nil {
 		return "", err
 	}
 
 	vals := []string{}
-	for _, v := range deconstructed {
-		vals = append(vals, v.Address)
+	switch strings.ToLower(field) {
+	case "bondedvalidators":
+		for _, v := range bondedValidators {
+			vals = append(vals, string(v.Address()))
+		}
+	case "unbondingvalidators":
+		for _, v := range unbondingValidators {
+			vals = append(vals, string(v.Address()))
+		}
+	default:
+		return "", fmt.Errorf("Field %s not recognized", field)
 	}
+	var s string
 	s = strings.Join(vals, ",")
 
 	return s, nil
