@@ -24,8 +24,8 @@ dependencies:
 
 test:
   override:
-    - "cd ${GOPATH%%:*}/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME} && glide install -s -v && GO15VENDOREXPERIMENT=1 go install ./cmd/epm"
-    - glide install -s -v
+    - cd $REPO && glide install 
+    - cd $REPO && go install ./cmd/epm
     - "tests/circle_test.sh | tee $CIRCLE_ARTIFACTS/output.log; test ${PIPESTATUS[0]} -eq 0"
 
 deployment:
