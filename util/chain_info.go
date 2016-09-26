@@ -15,6 +15,7 @@ import (
 )
 
 func ChainStatus(do *definitions.Do) (chainId string, latestBlockHeight int, err error) {
+	fmt.Printf("E-PM MARMOT connects to %s", do.Chain)
 	nodeClient := client.NewErisNodeClient(do.Chain)
 	// NOTE: ChainId should be bytes, convert it here to string
 	// NodeInfo is no longer exposed through Status();
@@ -24,6 +25,7 @@ func ChainStatus(do *definitions.Do) (chainId string, latestBlockHeight int, err
 		return "", 0, err
 	}
 	// set return values
+	// MARMOT
 	chainId = string(chainIdBytes)
 	return
 }

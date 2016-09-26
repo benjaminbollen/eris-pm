@@ -119,7 +119,9 @@ test_setup(){
   echo -e "Backup Key =>\t\t\t\t$key2_addr"
   eris chains start $chain_name --init-dir $chain_dir/$name_full 1>/dev/null
   sleep 5 # boot time
-  echo "Setup complete"
+  chain_ip=$(eris chains inspect $chain_name NetworkSettings.IPAddress)
+  keys_ip=$(eris services inspect keys NetworkSettings.IPAddress)
+  echo "Setup complete of chain $chain_name at $chain_ip; keys at $keys_ip"
 }
 
 goto_base(){
@@ -137,12 +139,12 @@ run_test(){
     echo
     cat readme.md
     echo
-    eris pkgs do --chain "$chain_name" --address "$key1_addr" --set "addr1=$key1_addr" --set "addr2=$key2_addr" --set "addr2_pub=$key2_pub" #--debug
+    $repo/epm --chain tcp://$chain_ip:46657 --sign http://$keys_ip:4767 --address "$key1_addr" --set "addr1=$key1_addr" --set "addr2=$key2_addr" --set "addr2_pub=$key2_pub" --debug
   else
     echo
     cat readme.md
     echo
-    eris pkgs do --chain "$chain_name" --address "$key1_addr" --set "addr1=$key1_addr" --set "addr2=$key2_addr" --set "addr2_pub=$key2_pub" --rm
+    $repo/epm --chain tcp://0.0.0.0:46657 --address "$key1_addr" --set "addr1=$key1_addr" --set "addr2=$key2_addr" --set "addr2_pub=$key2_pub" --rm
   fi
   test_exit=$?
 
@@ -221,10 +223,11 @@ then
   echo
   echo "Building eris-pm in a docker container."
   set -e
-  tests/build_outside_tool.sh 1>/dev/null
+  go build ./cmd/epm
+  # tests/build_outside_tool.sh 1>/dev/null
   if [ $? -ne 0 ]
   then
-    echo "Could not build eris-pm. Debug via by directly running [`pwd`/tests/build_outside_tool.sh]"
+    echo "Could not build eris-pm. Debug via by directly running [go build `pwd`/cmd/epm]"
     exit 1
   fi
   set +e

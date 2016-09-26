@@ -50,8 +50,8 @@ Complete documentation is available at https://docs.erisindustries.com
 		log.Info("Hello! I'm EPM.")
 
 		// Fixes path issues and controls for mint-client / eris-keys assumptions
-		util.BundleHttpPathCorrect(do)
-		util.PrintPathPackage(do)
+		// util.BundleHttpPathCorrect(do)
+		// util.PrintPathPackage(do)
 
 		// Populates chainID from the chain (if its not passed)
 		common.IfExit(util.GetChainID(do))

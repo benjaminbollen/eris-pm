@@ -39,6 +39,9 @@ func SendJob(send *definitions.Send, do *definitions.Do) (string, error) {
 		"source":      send.Source,
 		"destination": send.Destination,
 		"amount":      send.Amount,
+		"public key":  do.PublicKey,
+		"address":     send.Source,
+		"nonce":       send.Nonce,
 	}).Info("Sending Transaction")
 
 	erisNodeClient := client.NewErisNodeClient(do.Chain)
