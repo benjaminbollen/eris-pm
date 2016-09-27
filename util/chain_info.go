@@ -14,29 +14,27 @@ import (
 	"github.com/eris-ltd/eris-db/client"
 )
 
-func ChainStatus(do *definitions.Do) (chainId string, latestBlockHeight int, err error) {
-	fmt.Printf("E-PM MARMOT connects to %s", do.Chain)
+func GetBlockHeight(do *definitions.Do) (latestBlockHeight int, err error) {
 	nodeClient := client.NewErisNodeClient(do.Chain)
 	// NOTE: ChainId should be bytes, convert it here to string
 	// NodeInfo is no longer exposed through Status();
 	// other values are currentlu not used by e-pm
-	chainIdBytes, _, _, latestBlockHeight, _, err := nodeClient.Status()
+	_, _, _, latestBlockHeight, _, err = nodeClient.Status()
 	if err != nil {
-		return "", 0, err
+		return 0, err
 	}
 	// set return values
-	// MARMOT
-	chainId = string(chainIdBytes)
 	return
 }
 
+// TODO: it is unpreferable to mix static and non-static use of Do
 func GetChainID(do *definitions.Do) error {
 	if do.ChainID == "" {
-		chainId, _, err := ChainStatus(do)
+		nodeClient := client.NewErisNodeClient(do.Chain)
+		_, chainId, _, err := nodeClient.ChainId()
 		if err != nil {
 			return err
 		}
-
 		do.ChainID = chainId
 		log.WithField("=>", do.ChainID).Info("Using ChainID from Node")
 	}
