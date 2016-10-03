@@ -89,7 +89,7 @@ early_exit(){
     return 0
   fi
 
-  echo "There was an error duing setup; keys were not properly imported. Exiting."
+  echo "There was an error during setup; keys were not properly imported. Exiting."
   if [ "$was_running" -eq 0 ]
   then
     if [ "$ci" = true ]
@@ -221,10 +221,10 @@ then
   echo
   echo "Building eris-pm in a docker container."
   set -e
-  tests/build_tool.sh 1>/dev/null
+  tests/build_outside_tool.sh 1>/dev/null
   if [ $? -ne 0 ]
   then
-    echo "Could not build eris-pm. Debug via by directly running [`pwd`/tests/build_tool.sh]"
+    echo "Could not build eris-pm. Debug via by directly running [`pwd`/tests/build_outside_tool.sh]"
     exit 1
   fi
   set +e

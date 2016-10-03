@@ -14,11 +14,11 @@ func BundleHttpPathCorrect(do *definitions.Do) {
 
 func HttpPathCorrect(oldPath string, trailingSlash bool) string {
 	var newPath string
-	protoReg := regexp.MustCompile("https*://.*")
+	protoReg := regexp.MustCompile("tcp://.*")
 	trailer := regexp.MustCompile("/$")
 
 	if !protoReg.MatchString(oldPath) {
-		newPath = "http://" + oldPath
+		newPath = "tcp://" + oldPath
 	} else {
 		newPath = oldPath
 	}
