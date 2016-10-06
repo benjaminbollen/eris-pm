@@ -41,7 +41,7 @@ release_maj=$(echo $release_min | cut -d . -f 1-2)
 # rm -rf $repo/vendor &>/dev/null
 cd $repo
 # glide install
-go build --ldflags '-extldflags "-static"' -o ./epm_built ./cmd/epm
+# go build --ldflags '-extldflags "-static"' -o ./epm_built ./cmd/epm
 
 if [[ "$branch" = "master" ]]
 then

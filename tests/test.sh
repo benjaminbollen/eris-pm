@@ -119,6 +119,10 @@ test_setup(){
   echo -e "Backup Key =>\t\t\t\t$key2_addr"
   eris chains start $chain_name --init-dir $chain_dir/$name_full 1>/dev/null
   sleep 5 # boot time
+  chain_ip=$(eris chains inspect $chain_name NetworkSettings.IPAddress)
+  keys_ip=$(eris services inspect keys NetworkSettings.IPAddress)
+  echo -e "Chain at =>\t\t\t\t$chain_ip"
+  echo -e "Keys at =>\t\t\t\t$keys_ip"
   echo "Setup complete"
 }
 
@@ -137,12 +141,14 @@ run_test(){
     echo
     cat readme.md
     echo
-    eris pkgs do --chain "$chain_name" --address "$key1_addr" --set "addr1=$key1_addr" --set "addr2=$key2_addr" --set "addr2_pub=$key2_pub" #--debug
+    # eris pkgs do --chain "$chain_name" --address "$key1_addr" --set "addr1=$key1_addr" --set "addr2=$key2_addr" --set "addr2_pub=$key2_pub" #--debug
+    $repo/epm  --chain "tcp://$chain_ip:46657" --sign "http://$keys_ip:4767" --address "$key1_addr" --set "addr1=$key1_addr" --set "addr2=$key2_addr" --set "addr2_pub=$key2_pub" -w true
   else
     echo
     cat readme.md
     echo
-    eris pkgs do --chain "$chain_name" --address "$key1_addr" --set "addr1=$key1_addr" --set "addr2=$key2_addr" --set "addr2_pub=$key2_pub" --rm
+    # eris pkgs do --chain "$chain_name" --address "$key1_addr" --set "addr1=$key1_addr" --set "addr2=$key2_addr" --set "addr2_pub=$key2_pub" --rm
+   $repo/epm  --chain "tcp://$chain_ip:46657" --sign "http://$keys_ip:4767" --address "$key1_addr" --set "addr1=$key1_addr" --set "addr2=$key2_addr" --set "addr2_pub=$key2_pub" --rm
   fi
   test_exit=$?
 

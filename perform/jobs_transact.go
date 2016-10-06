@@ -170,7 +170,7 @@ func registerNameTx(name *definitions.RegisterName, do *definitions.Do) (string,
 	if name.Source != do.Package.Account {
 		do.PublicKey = oldKey
 	}
-
+	if !name.Wait { panic("NOT WAITING")}
 	// Sign, broadcast, display
 	return txFinalize(do, tx, name.Wait)
 }
