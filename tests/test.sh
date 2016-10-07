@@ -175,6 +175,10 @@ perform_tests(){
       failing_dir=`pwd`
       break
     fi
+    # TODO: the eris-pm docker image is currently bloated,
+    # so to prevent overloading the docker engine, we pause
+    # here for a short moment; proper solution is recreating leaner image
+    sleep 5
   done
 }
 
