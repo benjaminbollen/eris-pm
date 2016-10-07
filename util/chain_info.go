@@ -92,6 +92,8 @@ func AccountsInfo(account, field string, do *definitions.Do) (string, error) {
 		}
 	// } else {
 	// 	s, err = FormatOutput([]string{field}, 0, r)
+	} else if field == "balance" {
+		s = strconv.Itoa(int(r.Balance))
 	}
 
 	if err != nil {
