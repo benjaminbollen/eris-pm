@@ -70,5 +70,5 @@ docker rmi $testimage:deploy
 if [ "$ERIS_PM_LEAN" = true ]
 then
   echo "cleaning up"
-  rm $repo/epm_artefact
+  rm $repo/epm_artifact
 fi
