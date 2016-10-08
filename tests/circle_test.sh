@@ -58,7 +58,8 @@ echo
 # ----------------------------------------------------------
 # Run tests
 
-tests/test.sh
+# lean build requires go and glide to be installed on the host
+ERIS_PM_LEAN=true tests/test.sh
 test_exit=$?
 
 # ----------------------------------------------------------

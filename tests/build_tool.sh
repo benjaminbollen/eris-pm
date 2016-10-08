@@ -18,6 +18,7 @@
 
 # ----------------------------------------------------------
 # Set defaults
+INSTALL_BASE="/usr/local/bin"
 set -e
 if [ "$CIRCLE_BRANCH" ]
 then
@@ -35,11 +36,39 @@ release_maj=$(echo $release_min | cut -d . -f 1-2)
 # ---------------------------------------------------------------------------
 # Go!
 
+# build the static binary in a clean build environment
+echo "Building static binary in a clean build environment"
+docker build -t $testimage:build $repo
+
+if [ "$ERIS_PM_LEAN" = true ]
+then
+  # copy out the built executable to local host
+  echo "Recovering artefact to local host"
+  docker run --rm --entrypoint cat $testimage:build $INSTALL_BASE/epm > $repo/epm_artifact
+  # move the built artefact into a clean docker image
+  echo "Creating fresh deployment image with built artefact"
+  docker build -f $repo/tests/Dockerfile_deploy -t $testimage:deploy $repo
+else
+  # rename build image as deployment; skipping repackaging step
+  docker tag $testimage:build $testimage:deploy
+fi
+
 if [[ "$branch" = "master" ]]
 then
-  docker build -t $testimage:latest $repo
+  # retag original deploy image as latest image
+  docker tag $testimage:deploy $testimage:latest
   docker tag $testimage:latest $testimage:$release_maj
   docker tag $testimage:latest $testimage:$release_min
 else
-  docker build -t $testimage:$release_min $repo
+  # retag original deploy image as minor release image
+  docker tag $testimage:deploy $testimage:$release_min
+fi
+
+# clean up
+docker rmi $testimage:build
+docker rmi $testimage:deploy
+if [ "$ERIS_PM_LEAN" = true ]
+then
+  echo "cleaning up"
+  rm $repo/epm_artefact
 fi
